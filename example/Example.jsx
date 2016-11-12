@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import Select from './Select'
+import Select from '../src/Select'
+import '../src/styles.scss'
 
 export default class Example extends Component {
   constructor(props) {

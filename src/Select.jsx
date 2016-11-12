@@ -1,8 +1,6 @@
 import React, { Component, PropTypes } from 'react'
-import CSSModules from 'react-css-modules'
 import _ from 'lodash'
 import cx from 'classnames'
-import styles from './styles.scss'
 
 class Select extends Component {
   constructor(props) {
@@ -140,7 +138,7 @@ class Select extends Component {
 
     const optionClass = cx('option', { selected: isSelected })
     return (
-      <div key={`option-${i}`} onClick={handleSelect} styleName={optionClass} ref={DOMReference}>
+      <div key={`option-${i}`} onClick={handleSelect} className={optionClass} ref={DOMReference}>
         <span>{option.label}</span>
       </div>
     )
@@ -169,11 +167,11 @@ class Select extends Component {
     })
 
     return (
-      <div styleName={containerClass}>
-        <div styleName="display" onClick={this.handleShow}>
+      <div className={containerClass}>
+        <div className="display" onClick={this.handleShow}>
           <span>{this.renderLabel()}</span>
         </div>
-        <div styleName="list">
+        <div className="list">
           <div>
             {this.renderOptions()}
           </div>
@@ -207,4 +205,4 @@ Select.propTypes = {
   placeholder: PropTypes.string,
 }
 
-export default CSSModules(Select, styles, { allowMultiple: true })
+export default Select
