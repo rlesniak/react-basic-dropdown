@@ -1,6 +1,6 @@
 {
   "name": "react-basic-dropdown",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Very basic and primitive dropdown",
   "main": "dist/index.js",
   "scripts": {
@@ -33,6 +33,7 @@
     "babel-preset-es2015": "^6.0.15",
     "babel-preset-react": "^6.0.15",
     "babel-preset-stage-0": "^6.0.15",
+    "chokidar": "^1.6.1",
     "css-loader": "^0.25.0",
     "eslint": "^3.9.1",
     "eslint-config-airbnb": "^13.0.0",
@@ -43,8 +44,6 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "node-sass": "^3.11.2",
     "react-hot-loader": "^1.3.0",
-    "resolve-url": "^0.2.1",
-    "resolve-url-loader": "^1.6.0",
     "sass-loader": "^4.0.2",
     "style-loader": "^0.13.1",
     "webpack": "^1.12.2",
@@ -55,7 +54,6 @@
     "classnames": "^2.2.5",
     "lodash": "^4.16.6",
     "react": "^15.3.2",
-    "react-css-modules": "^3.7.10",
     "react-dom": "^15.3.2"
   }
 }
