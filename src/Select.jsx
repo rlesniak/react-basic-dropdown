@@ -11,9 +11,13 @@ class Select extends Component {
       isOpen: false,
     }
 
+    // index in array which represents filtered options based on first letter
+    // FIXME: maybe more clear variable name
+    this.activeLetterMapIndex = -1
+
     this.handleShow = this.handleShow.bind(this)
     this.hide = this.hide.bind(this)
-    this.move = this.move.bind(this)
+    this.onKeyDown = this.onKeyDown.bind(this)
   }
 
   componentWillReceiveProps(nextProps) {
@@ -25,12 +29,84 @@ class Select extends Component {
   }
 
   componentWillUnmount() {
-    document.removeEventListener('keydown', this.move)
+    document.removeEventListener('keydown', this.onKeyDown)
     document.removeEventListener('click', this.hide)
+  }
+
+  onKeyDown(e) {
+    e.preventDefault()
+    e.stopPropagation()
+
+    this.scrollIntoView()
+
+    switch (e.keyCode) {
+      case 40:
+        this.selectNext(e)
+        break
+      case 38:
+        this.selectPrev(e)
+        break
+      case 13:
+        this.hide()
+        break
+      default:
+        this.selectByLetter(e.keyCode)
+    }
   }
 
   getCurrentIndex() {
     return _.findIndex(this.props.options, { value: this.state.value })
+  }
+
+  selectByLetter(keyCode) {
+    if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 48 && keyCode <= 57)) {
+      const { options } = this.props
+
+      if (this.lastKeyCode === keyCode) {
+        const matchingLetterIndexesMap = []
+        _.each(options, (option, i) => {
+          if (option.label.toUpperCase().charCodeAt(0) === keyCode) {
+            matchingLetterIndexesMap.push(i)
+          }
+        })
+
+        if (matchingLetterIndexesMap.length === 0) {
+          return
+        }
+
+        // means that user touched second time the same letter
+        // so we're starting from second matching element
+        if (this.activeLetterMapIndex === -1) {
+          this.activeLetterMapIndex = 1
+        }
+
+        let selectedOption = options[matchingLetterIndexesMap[this.activeLetterMapIndex]]
+        if (selectedOption) {
+          this.activeLetterMapIndex = this.activeLetterMapIndex + 1
+        } else {
+          selectedOption = options[matchingLetterIndexesMap[0]]
+          this.activeLetterMapIndex = 1
+        }
+
+        this.selectOptionAndScrollToView(selectedOption)
+      } else {
+        this.activeLetterMapIndex = -1
+
+        const selectedOption = _.find(options, (option) => {
+          const firstLetter = option.label[0]
+
+          if (firstLetter.toUpperCase().charCodeAt(0) === keyCode) {
+            return true
+          }
+          return false
+        })
+
+        if (selectedOption) {
+          this.selectOptionAndScrollToView(selectedOption)
+        }
+      }
+      this.lastKeyCode = keyCode
+    }
   }
 
   handleSelect(item) {
@@ -50,13 +126,16 @@ class Select extends Component {
     }
   }
 
+  selectOptionAndScrollToView(option) {
+    const filtered = _.pick(option, ['label', 'value'])
+    this.setState(filtered, () => this.scrollIntoView())
+  }
+
   selectNext() {
     const next = this.props.options[this.getCurrentIndex() + 1]
 
     if (next) {
-      this.setState({
-        value: next.value,
-      })
+      this.selectOptionAndScrollToView(next)
     }
   }
 
@@ -64,29 +143,7 @@ class Select extends Component {
     const prev = this.props.options[this.getCurrentIndex() - 1]
 
     if (prev) {
-      this.setState({
-        value: prev.value,
-      })
-    }
-  }
-
-  move(e) {
-    e.preventDefault()
-    e.stopPropagation()
-
-    this.scrollIntoView()
-
-    switch (e.keyCode) {
-      case 40:
-        this.selectNext(e)
-        break
-      case 38:
-        this.selectPrev(e)
-        break
-      case 13:
-        this.hide()
-        break
-      default:
+      this.selectOptionAndScrollToView(prev)
     }
   }
 
@@ -97,16 +154,14 @@ class Select extends Component {
 
     this.setState({
       isOpen: true,
-    }, () => {
-      this.scrollIntoView()
-    })
+    }, () => this.scrollIntoView())
 
     if (this.props.onOpen) {
       this.props.onOpen.call(this)
     }
 
     document.addEventListener('click', this.hide)
-    document.addEventListener('keydown', this.move)
+    document.addEventListener('keydown', this.onKeyDown)
   }
 
   hide() {
@@ -119,7 +174,7 @@ class Select extends Component {
     }
 
     document.removeEventListener('click', this.hide)
-    document.removeEventListener('keydown', this.move)
+    document.removeEventListener('keydown', this.onKeyDown)
   }
 
   renderOption(option, i) {
