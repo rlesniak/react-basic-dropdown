@@ -1,10 +1,44 @@
-React Basic Dropdown
-=====================
-
+# React Basic Dropdown
 The minimal and simple React dropdown.
 
-### TODO:
+## Installation
+
+```shell
+yarn add react-basic-dropdown
+```
+or
+```shell
+npm install react-basic-dropdown --save
+```
+
+## Basic Usage
+```js
+import Select from 'react-basic-dropdown'
+// to have default stylesheets. Optional
+import 'react-basic-dropdown/dist/styles.css'
+
+class Example extends Component {
+  handleValueChange(val) {
+    console.log('change', val)
+  }
+
+  render() {
+    const options = [
+      { label: 'Option 1', value: 1 },
+      { label: 'Another option', value: 2 },
+    ]
+
+    return (
+      <Select
+        options={options}
+        onChange={this.handleValueChange}
+      />
+    )
+  }
+}
+```
+
+## TODO:
   - This readme
   - Tests
-  - Publish to NPM
   - More options
