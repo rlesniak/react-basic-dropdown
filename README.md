@@ -1,4 +1,6 @@
 # React Basic Dropdown
+[![Build Status](https://travis-ci.org/rlesniak/react-basic-dropdown.svg?branch=master)](https://travis-ci.org/rlesniak/react-basic-dropdown) [![npm version](https://badge.fury.io/js/react-basic-dropdown.svg)](https://badge.fury.io/js/react-basic-dropdown)
+
 The minimal and simple React dropdown.
 
 ## Installation
@@ -30,6 +32,7 @@ class Example extends Component {
 
     return (
       <Select
+        value={2}
         options={options}
         onChange={this.handleValueChange}
       />
@@ -40,5 +43,4 @@ class Example extends Component {
 
 ## TODO:
   - This readme
-  - Tests
-  - More options
+  - More configuration options
