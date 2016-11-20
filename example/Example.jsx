@@ -16,13 +16,7 @@ export default class Example extends Component {
   render() {
     const options = [
       { label: 'Option 1', value: 1 },
-      { label: 'Another option', value: 2, locked: true },
-      { label: 'Best option', value: 3, locked: true },
-      { label: 'Awesome option', value: 4 },
-      { label: 'Yolo option', value: 5 },
-      { label: 'Better option', value: 6 },
-      { label: 'Big option', value: 7 },
-      { label: 'Option 8', value: 8 },
+      { label: 'asdasd 1', value: 2 },
     ]
 
     return (

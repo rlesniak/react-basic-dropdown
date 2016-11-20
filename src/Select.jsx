@@ -65,7 +65,11 @@ class Select extends Component {
     const { options, value } = this.props
     const active = _.find(options, { value })
 
-    return active && active.locked ? '' : active.value
+    if (!active || (active && active.locked)) {
+      return ''
+    }
+
+    return active.value
   }
 
   getCurrentIndex() {
