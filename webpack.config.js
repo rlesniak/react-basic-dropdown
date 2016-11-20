@@ -18,6 +18,11 @@ module.exports = {
   resolve: {
     extensions: ['', '.js', '.jsx'],
   },
+  externals: {
+    'react/addons': true,
+    'react/lib/ExecutionEnvironment': true,
+    'react/lib/ReactContext': true
+  },
   module: {
     loaders: [
       {
