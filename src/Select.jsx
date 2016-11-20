@@ -6,7 +6,8 @@ class Select extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      value: props.value || null,
+      options: this.getOptions(),
+      value: this.getValue(),
       label: null,
       isOpen: false,
     }
@@ -41,10 +42,10 @@ class Select extends Component {
 
     switch (e.keyCode) {
       case 40:
-        this.selectNext(e)
+        this.selectNext()
         break
       case 38:
-        this.selectPrev(e)
+        this.selectPrev()
         break
       case 13:
         this.hide()
@@ -54,8 +55,21 @@ class Select extends Component {
     }
   }
 
+  getOptions() {
+    const firstOption = [{ label: this.props.placeholder, value: '', disabled: true }]
+
+    return firstOption.concat(this.props.options)
+  }
+
+  getValue() {
+    const { options, value } = this.props
+    const active = _.find(options, { value })
+
+    return active && active.locked ? '' : active.value
+  }
+
   getCurrentIndex() {
-    return _.findIndex(this.props.options, { value: this.state.value })
+    return _.findIndex(this.state.options, { value: this.state.value })
   }
 
   selectByLetter(keyCode) {
@@ -65,7 +79,7 @@ class Select extends Component {
       if (this.lastKeyCode === keyCode) {
         const matchingLetterIndexesMap = []
         _.each(options, (option, i) => {
-          if (option.label.toUpperCase().charCodeAt(0) === keyCode) {
+          if (option.label.toUpperCase().charCodeAt(0) === keyCode && !option.locked) {
             matchingLetterIndexesMap.push(i)
           }
         })
@@ -95,7 +109,7 @@ class Select extends Component {
         const selectedOption = _.find(options, (option) => {
           const firstLetter = option.label[0]
 
-          if (firstLetter.toUpperCase().charCodeAt(0) === keyCode) {
+          if (firstLetter.toUpperCase().charCodeAt(0) === keyCode && !option.locked) {
             return true
           }
           return false
@@ -110,13 +124,17 @@ class Select extends Component {
   }
 
   handleSelect(item) {
+    if (item.locked) {
+      return
+    }
+
     this.setState({
       value: item.value,
       label: item.label,
     })
 
     if (this.props.onChange) {
-      this.props.onChange.bind(this)(item)
+      this.props.onChange(item)
     }
   }
 
@@ -132,18 +150,23 @@ class Select extends Component {
   }
 
   selectNext() {
-    const next = this.props.options[this.getCurrentIndex() + 1]
-
-    if (next) {
-      this.selectOptionAndScrollToView(next)
-    }
+    this.findNextOption(1)
   }
 
   selectPrev() {
-    const prev = this.props.options[this.getCurrentIndex() - 1]
+    this.findNextOption(-1)
+  }
 
-    if (prev) {
-      this.selectOptionAndScrollToView(prev)
+  findNextOption(delta) {
+    const { options } = this.state
+    let nextIndex = this.getCurrentIndex() + delta
+
+    while (options[nextIndex]) {
+      if (!options[nextIndex].locked && !options[nextIndex].disabled) {
+        this.selectOptionAndScrollToView(options[nextIndex])
+        break
+      }
+      nextIndex += delta
     }
   }
 
@@ -184,16 +207,20 @@ class Select extends Component {
 
     const { value } = this.state
     const handleSelect = this.handleSelect.bind(this, option)
-    const isSelected = value === option.value
+    const isSelected = (value === option.value && !option.locked)
     const DOMReference = (ref) => {
       if (isSelected) {
         this.activeDOMRef = ref
       }
     }
 
-    const optionClass = cx('option', { selected: isSelected })
+    const classNames = cx('option', {
+      selected: isSelected,
+      locked: option.locked,
+    })
+
     return (
-      <div key={`option-${i}`} onClick={handleSelect} className={optionClass} ref={DOMReference}>
+      <div key={`option-${i}`} onClick={handleSelect} className={classNames} ref={DOMReference}>
         <span>{option.label}</span>
       </div>
     )
@@ -204,15 +231,11 @@ class Select extends Component {
       return null
     }
 
-    return this.props.options.map(this.renderOption.bind(this))
+    return this.state.options.map(this.renderOption.bind(this))
   }
 
   renderLabel() {
-    if (!this.state.value) {
-      return this.props.placeholder
-    }
-
-    return _.find(this.props.options, { value: this.state.value }).label
+    return _.find(this.state.options, { value: this.state.value }).label
   }
 
   render() {
@@ -238,16 +261,22 @@ class Select extends Component {
 
 Select.defaultProps = {
   placeholder: 'Select',
+  options: [],
+  value: '',
 }
 
 Select.propTypes = {
   options: PropTypes.arrayOf(PropTypes.shape({
-    label: PropTypes.string.isRequired,
+    label: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.number,
+    ]).isRequired,
     value: PropTypes.oneOfType([
       PropTypes.string,
       PropTypes.number,
     ]).isRequired,
     disabled: PropTypes.bool,
+    locked: PropTypes.bool,
   })).isRequired,
   value: PropTypes.oneOfType([
     PropTypes.string,

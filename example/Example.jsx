@@ -16,8 +16,8 @@ export default class Example extends Component {
   render() {
     const options = [
       { label: 'Option 1', value: 1 },
-      { label: 'Another option', value: 2 },
-      { label: 'Best option', value: 3 },
+      { label: 'Another option', value: 2, locked: true },
+      { label: 'Best option', value: 3, locked: true },
       { label: 'Awesome option', value: 4 },
       { label: 'Yolo option', value: 5 },
       { label: 'Better option', value: 6 },
@@ -27,6 +27,7 @@ export default class Example extends Component {
 
     return (
       <Select
+        value={2}
         options={options}
         onChange={this.handleValueChange}
       />

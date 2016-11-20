@@ -60,6 +60,10 @@ $border-radius: 3px;
   &.selected {
     background-color: lighten($main-color, 30)
   }
+
+  &.locked {
+    opacity: .5;
+  }
 }
 
 .disabled {
