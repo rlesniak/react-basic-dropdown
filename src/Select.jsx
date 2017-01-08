@@ -144,7 +144,8 @@ class Select extends Component {
 
   scrollIntoView() {
     if (this.activeDOMRef) {
-      this.activeDOMRef.scrollIntoView()
+      const distanceToTop = this.activeDOMRef.offsetTop
+      this.optionsListRef.scrollTop = distanceToTop - 50
     }
   }
 
@@ -238,6 +239,19 @@ class Select extends Component {
     return this.state.options.map(this.renderOption.bind(this))
   }
 
+  renderList() {
+    if (!this.state.isOpen) {
+      return null
+    }
+    return (
+      <div className="list">
+        <div className="scroll" ref={(ref) => { this.optionsListRef = ref }}>
+          {this.renderOptions()}
+        </div>
+      </div>
+    )
+  }
+
   renderLabel() {
     return _.find(this.state.options, { value: this.state.value }).label
   }
@@ -253,11 +267,7 @@ class Select extends Component {
         <div className="display" onClick={this.handleShow}>
           <span>{this.renderLabel()}</span>
         </div>
-        <div className="list">
-          <div>
-            {this.renderOptions()}
-          </div>
-        </div>
+        {this.renderList()}
       </div>
     )
   }
