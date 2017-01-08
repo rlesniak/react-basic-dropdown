@@ -1,6 +1,6 @@
 {
   "name": "react-basic-dropdown",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Very basic and primitive dropdown",
   "main": "dist/index.js",
   "scripts": {
