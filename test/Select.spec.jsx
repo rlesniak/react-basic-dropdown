@@ -14,7 +14,8 @@ describe('<Select/>', () => {
   }
 
   it('renders proper number of options', () => {
-    const wrapper = shallow(<Select {...defProps} />)
+    const wrapper = mount(<Select {...defProps} />)
+    wrapper.find('.display').simulate('click')
     expect(wrapper.find('.option')).to.have.length(2)
   })
 
